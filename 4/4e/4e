@@ -1,0 +1,231 @@
+Assign documents to a collection based on the album.
+
+1.Generating query by query by console
+
+xquery version "1.0-ml";
+
+
+declare variable $OUTPUT-FILENAME := "/Users/ipshamohanty/Desktop/body";
+
+declare variable $BOUNDARY := "BOUNDARY";
+
+
+let $xml-metadata2 := document {
+
+    <rapi:metadata xmlns:rapi="http://marklogic.com/rest-api">
+
+      <rapi:quality>1</rapi:quality>
+
+    </rapi:metadata>
+
+  }
+
+let $xml-doc2 := document{ <SONG>
+
+<TITLE>40</TITLE>
+
+<ALBUM>War</ALBUM>
+
+<YEAR>1983</YEAR>
+
+
+<LINE>
+
+I waited patiently for the Lord</LINE>
+
+<LINE>
+
+He inclined and heard my cry</LINE>
+
+<LINE>
+
+He brought me up out of the pit</LINE>
+
+<LINE>
+
+Out of the miry clay</LINE>
+
+<LINE>
+
+</LINE>
+
+<LINE>
+
+I will sing, sing a new song</LINE>
+
+<LINE>
+
+I will sing, sing a new song</LINE>
+
+<LINE>
+
+</LINE>
+
+<LINE>
+
+How long to sing this song</LINE>
+
+<LINE>
+
+How long to sing this song</LINE>
+
+<LINE>
+
+How long, how long, how long</LINE>
+
+<LINE>
+
+How long to sing this song</LINE>
+
+<LINE>
+
+</LINE>
+
+<LINE>
+
+He set my feet upon a rock</LINE>
+
+<LINE>
+
+And made my footsteps firm</LINE>
+
+<LINE>
+
+Many will see</LINE>
+
+<LINE>
+
+Many will see and hear</LINE>
+
+<LINE>
+
+</LINE>
+
+<LINE>
+
+I will sing, sing a new song</LINE>
+
+<LINE>
+
+I will sing, sing a new song</LINE>
+
+<LINE>
+
+I will sing, sing a new song</LINE>
+
+<LINE>
+
+I will sing, sing a new song</LINE>
+
+<LINE>
+
+</LINE>
+
+<LINE>
+
+How long to sing this song </LINE>
+
+<LINE>
+
+How long to sing this song </LINE>
+
+<LINE>
+
+How long, how long, how long </LINE>
+
+<LINE>
+
+How long to sing this song</LINE>
+
+
+</SONG>
+
+ }
+
+let $manifest :=
+
+  <manifest>
+
+    <!-- XML document-specific metadata -->
+
+    <part>
+
+      <headers>
+
+        <Content-Type>application/xml</Content-Type>
+
+        <Content-Disposition>attachment; filename="doc2.xml";
+
+category=metadata</Content-Disposition>
+
+      </headers>
+
+    </part>
+
+    <!-- XML content -->
+
+    <part>
+
+      <headers>
+
+        <Content-Type>application/xml</Content-Type>
+
+        <Content-Disposition>attachment;
+
+filename="doc2.xml"</Content-Disposition>
+
+      </headers>
+
+    </part>
+
+  </manifest>
+
+return
+
+xdmp:save($OUTPUT-FILENAME,
+
+  xdmp:multipart-encode(
+
+    $BOUNDARY, $manifest,
+
+    ($xml-metadata2,$xml-doc2)
+
+  )
+
+)
+
+
+2.Post
+
+curl --anyauth --user admin:#Zwzv01* -X POST -i  --data-binary @body
+-H "Content-type: multipart/mixed; boundary=BOUNDARY"  -H "Accept:
+application/json" 'http://localhost:8000/v1/documents'
+
+3.Get
+
+curl --anyauth --user admin:#Zwzv01* -X GET -i  -H "Accept:
+application/xml"  http://localhost:8000/v1/documents?uri=doc2.xml
+
+3.Checking metadata
+
+curl  --anyauth --user admin:#Zwzv01* -X GET
+
+'http://localhost:8000/v1/documents?uri=doc2.xml&category=metadata'
+
+4.Modifying the file by adding metadata using put.Here, while adding the metadata, I gave gave the name of the collection same as the name of the Album to which a song belongs
+
+curl -X PUT -T ./metadata.xml -H "Content-type: application/xml"
+--anyauth --user admin:#Zwzv01*
+'http://localhost:8000/LATEST/documents?uri=doc2.xml&category=collections'
+
+
+curl  --anyauth --user admin:#Zwzv01* -X GET
+
+'http://localhost:8000/v1/documents?uri=doc2.xml&category=metadata'
+
+
+curl --anyauth --user admin:#Zwzv01* -i -X GET -H "Content-type:
+application/xml" -H "Accept: application/xml"
+
+'http://localhost:8000/v1/qbe?query=%3Cq%3Aqbe%20xmlns%3Aq%3D%22http%3A%2F%2Fmarklogic.com%2Fappservices%2Fquerybyexample%22%3E%0A%20%20%3Cq%3Aquery%3E%0A%20%20%20%20%3CALBUM%3EWar%3C%2FALBUM%3E%0A%20%20%3C%2Fq%3Aquery%3E%0A%3C%2Fq%3Aqbe%3E%0A'
+

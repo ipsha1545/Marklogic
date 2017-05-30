@@ -1,0 +1,126 @@
+Get a particular document by its URI (/v1/documents endpoint)
+
+1.To get a document by its URI, at first I did POST
+
+
+
+
+GENERATE QUERY FROM QUERY CONSOLE:
+
+xquery version "1.0-ml";
+
+
+declare variable $OUTPUT-FILENAME := "/Users/ipshamohanty/Desktop/body";
+
+declare variable $BOUNDARY := "BOUNDARY";
+
+
+let $json-metadata1 := text { '{"quality" : 2 }'}
+
+let $json-doc1 := text { '{ "key": "some json content" }' }
+
+let $xml-metadata2 := document {
+
+    <rapi:metadata xmlns:rapi="http://marklogic.com/rest-api">
+
+      <rapi:quality>1</rapi:quality>
+
+    </rapi:metadata>
+
+  }
+
+let $xml-doc2 := document{ <root>some xml content</root> }
+
+let $manifest :=
+
+  <manifest>
+
+    <!-- JSON request default metadata -->
+
+    <part>
+
+      <headers>
+
+         <Content-Type>application/json</Content-Type>
+
+         <Content-Disposition>inline; category=metadata</Content-Disposition>
+
+      </headers>
+
+    </part>
+
+    <!-- JSON document -->
+
+    <part>
+
+       <headers>
+
+          <Content-Type>application/json</Content-Type>
+
+          <Content-Disposition>attachment;
+filename="doc1.json"</Content-Disposition>
+
+       </headers>
+
+    </part>
+
+    <!-- XML document-specific metadata -->
+
+    <part>
+
+      <headers>
+
+        <Content-Type>application/xml</Content-Type>
+
+        <Content-Disposition>attachment; filename="doc2.xml";
+category=metadata</Content-Disposition>
+
+      </headers>
+
+    </part>
+
+    <!-- XML content -->
+
+    <part>
+
+      <headers>
+
+        <Content-Type>application/xml</Content-Type>
+
+        <Content-Disposition>attachment;
+filename="doc2.xml"</Content-Disposition>
+
+      </headers>
+
+    </part>
+
+  </manifest>
+
+return
+
+xdmp:save($OUTPUT-FILENAME,
+
+  xdmp:multipart-encode(
+
+    $BOUNDARY, $manifest,
+
+    ($json-metadata1,$json-doc1,$xml-metadata2,$xml-doc2)
+
+  )
+
+
+
+)
+
+POST
+
+curl --anyauth --user admin:#Zwzv01* -X POST -i --data-binary @body -H
+"Content-type: multipart/mixed; boundary=BOUNDARY"  -H "Accept:
+application/json" 'http://localhost:8000/v1/documents' 
+
+
+2.After that I did GET request by using curl
+
+curl --anyauth --user admin:#Zwzv01* -X GET -i  -H "Accept:
+application/xml"  http://localhost:8000/v1/documents?uri=doc2.xml
+

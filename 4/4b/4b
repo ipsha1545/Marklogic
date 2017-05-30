@@ -1,0 +1,22 @@
+1.To find all songs in a specific album (<ALBUM> is a tag in the sample
+.xml files),I constructed a query and used /qbe ie
+'query by example' endpoint of the MarkLogic server.
+
+2.Below is the query to find all the songs in a specific album i.e. 'War'.
+
+<q:qbe xmlns:q="http://marklogic.com/appservices/querybyexample">
+  <q:query>
+    <ALBUM>War</ALBUM>
+  </q:query>
+</q:qbe>
+
+3.Below is the encoded URL
+
+%3Cq%3Aqbe%20xmlns%3Aq%3D%22http%3A%2F%2Fmarklogic.com%2Fappservices%2Fquerybyexample%22%3E%0A%20%20%3Cq%3Aquery%3E%0A%20%20%20%20%3CALBUM%3EWar%3C%2FALBUM%3E%0A%20%20%3C%2Fq%3Aquery%3E%0A%3C%2Fq%3Aqbe%3E%0A
+
+4.After that,I pasted the URL in the curl command to retrieve the list of songs in the album ‘War’.Before that, I verified that there are sample documents uploaded on the server to verify the results
+
+curl --anyauth --user admin:#Zwzv01* -i -X GET -H "Content-type:
+application/xml" -H "Accept: application/xml"
+'http://localhost:8000/v1/qbe?query=%3Cq%3Aqbe%20xmlns%3Aq%3D%22http%3A%2F%2Fmarklogic.com%2Fappservices%2Fquerybyexample%22%3E%0A%20%20%3Cq%3Aquery%3E%0A%20%20%20%20%3CALBUM%3EWar%3C%2FALBUM%3E%0A%20%20%3C%2Fq%3Aquery%3E%0A%3C%2Fq%3Aqbe%3E%0A'
+

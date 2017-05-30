@@ -1,0 +1,3 @@
+4d. Verify deletion of all documents in the collection.
+
+To verify whether the documents are deleted or not in 4c, I did an http get request in the browswer and the response received is 404 not found which means that the document is deleted.

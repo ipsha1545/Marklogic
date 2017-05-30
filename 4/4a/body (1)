@@ -1,0 +1,29 @@
+--BOUNDARY
+Content-Type: application/json
+Content-Disposition: inline; category=metadata
+Content-Length: 16
+
+{"quality" : 2 }
+--BOUNDARY
+Content-Type: application/json
+Content-Disposition: attachment; filename="doc1.json"
+Content-Length: 30
+
+{ "key": "some json content" }
+--BOUNDARY
+Content-Type: application/xml
+Content-Disposition: attachment; filename="doc2.xml"; category=metadata
+Content-Length: 147
+
+<?xml version="1.0" encoding="UTF-8"?>
+<rapi:metadata xmlns:rapi="http://marklogic.com/rest-api">
+  <rapi:quality>1</rapi:quality>
+</rapi:metadata>
+--BOUNDARY
+Content-Type: application/xml
+Content-Disposition: attachment; filename="doc2.xml"
+Content-Length: 68
+
+<?xml version="1.0" encoding="UTF-8"?>
+<root>some xml content</root>
+--BOUNDARY--

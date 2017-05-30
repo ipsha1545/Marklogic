@@ -1,0 +1,5 @@
+Instructions to delete all the documents in a collection
+
+At first,I checked whether the documents existed or not by doing GET and then I deleted by using the following command
+
+curl --anyauth --user root:root -X DELETE -i http://localhost:8000/v1/documents?uri=doc2.xml
